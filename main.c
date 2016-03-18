@@ -49,7 +49,7 @@ int main(int argc, char **argv)
 
         ptr = &elf;
 
-        siz = fread(ptr, 1, EI_NIDENT, fp);
+        siz = fread(ptr, 1, sizeof(elf), fp);
         d(printf(">> Read %zu bytes from %s.\n", siz, argv[1]));
         fclose(fp);
 
@@ -61,7 +61,8 @@ int main(int argc, char **argv)
         printf("=== ELF info for `%s` ===\n", argv[1]);
         printf("Class: %s.\n", get_elf_class(&elf));
         printf("Data: %s\n", get_elf_data_encoding(&elf));
-        printf("Version: %d", get_elf_version(&elf));
+        printf("Version: %d\n", get_elf_version(&elf));
+        printf("Object Type: %s\n", get_elf_object_type(&elf));
 
         printf("\n");
 

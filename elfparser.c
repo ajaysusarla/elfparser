@@ -32,6 +32,7 @@ int validate_elf_ident(Elf32_Eheader *file)
 }
 
 
+/* Class */
 static char *class_arr[] = {
         "None",
         "32 bit",
@@ -43,6 +44,7 @@ char *get_elf_class(Elf32_Eheader *file)
         return class_arr[file->e_ident[EI_CLASS]];
 }
 
+/* Endianess */
 static char *data_enc_arr[] = {
         "None",
         "LSB - little endian",
@@ -54,8 +56,24 @@ char * get_elf_data_encoding(Elf32_Eheader *file)
         return data_enc_arr[file->e_ident[EI_CLASS]];
 }
 
+/* ELF version from identity */
 int get_elf_version(Elf32_Eheader *file)
 {
         return file->e_ident[EI_VERSION];
 }
 
+/* ELF Object Type */
+static char *obj_type_arr[] = {
+        "None",
+        "Relocatable file",
+        "Executable file",
+        "Shared object file",
+        "Core file",
+        "Processor-specific",
+        "Processor-specific"
+};
+
+char * get_elf_object_type(Elf32_Eheader *file)
+{
+        return obj_type_arr[file->e_type];
+}

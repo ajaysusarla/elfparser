@@ -46,6 +46,15 @@
 #define EV_CURRENT 1
 
 /* ELF Object type */
+#define ET_NONE   0
+#define ET_REL    1
+#define ET_EXEC   2
+#define ET_DYN    3
+#define ET_CORE   4
+#define ET_LOPROC 0xFF00
+#define ET_HIPROC 0xFFFF
+
+/* ELF Machine type */
 #define EM_NONE  0
 #define EM_M32   1
 #define EM_SPARC 2
@@ -65,5 +74,6 @@ int validate_elf_ident(Elf32_Eheader *file);
 char *get_elf_class(Elf32_Eheader *file);
 char *get_elf_data_encoding(Elf32_Eheader *file);
 int get_elf_version(Elf32_Eheader *file);
+char * get_elf_object_type(Elf32_Eheader *file);
 
 #endif  /* _ELF_PARSER_H_ */
