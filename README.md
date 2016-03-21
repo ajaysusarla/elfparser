@@ -1,4 +1,4 @@
 elfparser
 ========
 
-A simple elf parser in Rust. Written as a learning exercise.
+A simple elf parser in Rust and C. Written as a learning exercise.
