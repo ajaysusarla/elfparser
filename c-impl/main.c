@@ -53,19 +53,24 @@ int main(int argc, char **argv)
         d(printf(">> Read %zu bytes from %s.\n", siz, argv[1]));
         fclose(fp);
 
+        if (siz < sizeof(elf)) {
+                fprintf(stderr, "fread: Couldn't read elf header.\n");
+        }
+
         if (validate_elf_ident(&elf) != 0) {
-                fprintf(stderr, "Invalid ELF file!\n");
+                fprintf(stderr, "Not a valid ELF file!\n");
                 exit(EXIT_FAILURE);
         }
 
         printf("=== ELF info for `%s` ===\n", argv[1]);
-        printf("Class: %s.\n", get_elf_class(&elf));
-        printf("Data: %s\n", get_elf_data_encoding(&elf));
-        printf("Version: %d\n", get_elf_version(&elf));
-        printf("Object Type: %s\n", get_elf_object_type(&elf));
+        printf("Class        : %s\n", get_elf_class(&elf));
+        printf("Data         : %s\n", get_elf_data_encoding(&elf));
+        printf("Version      : %d\n", get_elf_version_from_ident(&elf));
+        printf("Object Type  : %s\n", get_elf_object_type(&elf));
+        printf("Architecture : %s\n", get_elf_architecture(&elf));
+        printf("Version      : %d\n", get_elf_version(&elf));
 
         printf("\n");
 
         exit(EXIT_SUCCESS);
 }
-

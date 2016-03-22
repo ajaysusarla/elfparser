@@ -46,34 +46,48 @@
 #define EV_CURRENT 1
 
 /* ELF Object type */
-#define ET_NONE   0
-#define ET_REL    1
-#define ET_EXEC   2
-#define ET_DYN    3
-#define ET_CORE   4
-#define ET_LOPROC 0xFF00
-#define ET_HIPROC 0xFFFF
+enum ELFObjectType {
+        ET_NONE = 0,
+        ET_REL = 1,
+        ET_REXEC = 2,
+        ET_DYN = 3,
+        ET_CORE = 4,
+        ET_LOPROC = 0xFF00,
+        ET_HIPROC = 0xFFFF,
+        ET_NUM
+};
 
 /* ELF Machine type */
-#define EM_NONE  0
-#define EM_M32   1
-#define EM_SPARC 2
-#define EM_386   3
-#define EM_68K   4
-#define EM_88K   5
-#define EM_860   6
-#define EM_MIPS  7
+enum ELFMachineType {
+        EM_NONE = 0,
+        EM_M32 = 1,
+        EM_SPARC = 2,
+        EM_386 = 3,
+        EM_68K = 4,
+        EM_88K = 5,
+        EM_860 = 6,
+        EM_MIPS = 7,
+        EM_SPARC32PLUS = 18,
+        EM_ARM = 40,
+        EM_SPARCV9 = 43,
+        EM_AMD64 = 62,
+        EM_NUM
+};
 
 typedef struct {
         unsigned char e_ident[EI_NIDENT];
         uint16_t      e_type;
+        uint16_t      e_machine;
+        uint32_t      e_version;
 } Elf32_Eheader;
 
 
 int validate_elf_ident(Elf32_Eheader *file);
 char *get_elf_class(Elf32_Eheader *file);
 char *get_elf_data_encoding(Elf32_Eheader *file);
+int get_elf_version_from_ident(Elf32_Eheader *file);
+char *get_elf_object_type(Elf32_Eheader *file);
+char *get_elf_architecture(Elf32_Eheader *file);
 int get_elf_version(Elf32_Eheader *file);
-char * get_elf_object_type(Elf32_Eheader *file);
 
 #endif  /* _ELF_PARSER_H_ */

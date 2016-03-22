@@ -20,9 +20,11 @@ LIBS :=
 CFLAGS := $(DEBUG) $(EXTRA_CFLAGS) $(OSFLAGS)
 TEST_CFLAGS := $(CFLAGS) -I$(CWD)
 
-all: elfparser main.c
-	$(CC) $(CFLAGS) -c main.c
+all: elfparser main
 	$(CC) $(CFLAGS) $(LIBS) elfparser.o main.o -o elfparser
+
+main: main.c
+	$(CC) $(CFLAGS) -c main.c
 
 elfparser: elfparser.c elfparser.h
 	$(CC) $(CFLAGS) -c elfparser.c
