@@ -13,10 +13,9 @@
  * License along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#ifndef _ELF_PARSER_H_
-#define _ELF_PARSER_H_
 
-#include <stdint.h>
+#ifndef _ELF_COMMON_H_
+#define _ELF_COMMON_H_
 
 /* ELF identification */
 #define EI_MAG0    0
@@ -27,7 +26,7 @@
 #define EI_DATA    5
 #define EI_VERSION 6
 #define EI_PAD     7
-#define EI_NIDENT  16
+#define EI_NIDENT   16
 
 #define ELFMAG0 0x7F            /* Magic Number */
 #define ELFMAG1 'E'
@@ -74,20 +73,4 @@ enum ELFMachineType {
         EM_NUM
 };
 
-typedef struct {
-        unsigned char e_ident[EI_NIDENT];
-        uint16_t      e_type;
-        uint16_t      e_machine;
-        uint32_t      e_version;
-} Elf32_Eheader;
-
-
-int validate_elf_ident(Elf32_Eheader *file);
-char *get_elf_class(Elf32_Eheader *file);
-char *get_elf_data_encoding(Elf32_Eheader *file);
-int get_elf_version_from_ident(Elf32_Eheader *file);
-char *get_elf_object_type(Elf32_Eheader *file);
-char *get_elf_architecture(Elf32_Eheader *file);
-int get_elf_version(Elf32_Eheader *file);
-
-#endif  /* _ELF_PARSER_H_ */
+#endif  /* _ELF_COMMON_H_ */

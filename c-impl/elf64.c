@@ -13,10 +13,13 @@
  * License along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include "elfparser.h"
 
-int validate_elf_ident(Elf32_Eheader *file)
+#include "elf64.h"
+
+int validate_elf64_ident(void *data)
 {
+        Elf64_Eheader *file = (Elf64_Eheader *)data;
+
         if (file->e_ident[EI_MAG0] != ELFMAG0 ||
             file->e_ident[EI_MAG1] != ELFMAG1 ||
             file->e_ident[EI_MAG2] != ELFMAG2 ||
@@ -31,7 +34,6 @@ int validate_elf_ident(Elf32_Eheader *file)
         return 0;
 }
 
-
 /* Class */
 static char *class_arr[] = {
         "None",
@@ -39,8 +41,10 @@ static char *class_arr[] = {
         "64 bit"
 };
 
-char *get_elf_class(Elf32_Eheader *file)
+char *get_elf64_class(void *data)
 {
+        Elf64_Eheader *file = (Elf64_Eheader *)data;
+
         return class_arr[file->e_ident[EI_CLASS]];
 }
 
@@ -51,14 +55,18 @@ static char *data_enc_arr[] = {
         "MSB - big endian"
 };
 
-char *get_elf_data_encoding(Elf32_Eheader *file)
+char *get_elf64_data_encoding(void *data)
 {
+        Elf64_Eheader *file = (Elf64_Eheader *)data;
+
         return data_enc_arr[file->e_ident[EI_CLASS]];
 }
 
 /* ELF version from identity */
-int get_elf_version_from_ident(Elf32_Eheader *file)
+uint32_t get_elf64_version_from_ident(void *data)
 {
+        Elf64_Eheader *file = (Elf64_Eheader *)data;
+
         return file->e_ident[EI_VERSION];
 }
 
@@ -73,8 +81,10 @@ static char *obj_type_arr[] = {
         "Processor-specific"
 };
 
-char *get_elf_object_type(Elf32_Eheader *file)
+char *get_elf64_object_type(void *data)
 {
+        Elf64_Eheader *file = (Elf64_Eheader *)data;
+
         switch(file->e_type) {
         case ET_NONE:
         case ET_REL:
@@ -103,8 +113,10 @@ static char *machine_arr[] = {
         "MIPS RS3000",
 };
 
-char *get_elf_architecture(Elf32_Eheader *file)
+char *get_elf64_architecture(void *data)
 {
+        Elf64_Eheader *file = (Elf64_Eheader *)data;
+
         switch(file->e_machine) {
         case EM_NONE:
         case EM_M32:
@@ -129,7 +141,33 @@ char *get_elf_architecture(Elf32_Eheader *file)
 }
 
 /* ELF version */
-int get_elf_version(Elf32_Eheader *file)
+uint32_t get_elf64_version(void *data)
 {
+        Elf64_Eheader *file = (Elf64_Eheader *)data;
+
         return file->e_version;
+}
+
+/* ELF entry address */
+uint32_t get_elf64_entry_addr(void *data)
+{
+        Elf64_Eheader *file = (Elf64_Eheader *)data;
+
+        return file->e_entry;
+}
+
+
+uint32_t get_elf64_prog_hdr_off(void *data)
+{
+        Elf64_Eheader *file = (Elf64_Eheader *)data;
+
+        return file->e_phoff;
+}
+
+
+uint32_t get_elf64_sect_hdr_off(void *data)
+{
+        Elf64_Eheader *file = (Elf64_Eheader *)data;
+
+        return file->e_shoff;
 }
