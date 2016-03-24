@@ -35,11 +35,11 @@ typedef struct _elfObject ElfObject;
 ElfObject *elf_object_init(const char *path);
 void elf_object_free(ElfObject **obj);
 
-char *elf_get_class(ElfObject *obj);
-char *elf_get_data_encoding(ElfObject *obj);
+const char *elf_get_class(ElfObject *obj);
+const char *elf_get_data_encoding(ElfObject *obj);
 uint32_t elf_get_version_from_ident(ElfObject *obj);
-char *elf_get_object_type(ElfObject *obj);
-char *elf_get_architecture(ElfObject *obj);
+const char *elf_get_object_type(ElfObject *obj);
+const char *elf_get_architecture(ElfObject *obj);
 uint32_t elf_get_version(ElfObject *obj);
 uint32_t elf_get_entry_addr(ElfObject *obj);
 uint32_t elf_get_prog_hdr_off(ElfObject *obj);

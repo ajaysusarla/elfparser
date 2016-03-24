@@ -39,11 +39,11 @@ typedef struct {
 } Elf64_Eheader;
 
 int validate_elf64_ident(void *data);
-char *get_elf64_class(void *data);
-char *get_elf64_data_encoding(void *data);
+const char *get_elf64_class(void *data);
+const char *get_elf64_data_encoding(void *data);
 uint32_t get_elf64_version_from_ident(void *data);
-char *get_elf64_object_type(void *data);
-char *get_elf64_architecture(void *data);
+const char *get_elf64_object_type(void *data);
+const char *get_elf64_architecture(void *data);
 uint32_t get_elf64_version(void *data);
 uint32_t get_elf64_entry_addr(void *data);
 uint32_t get_elf64_prog_hdr_off(void *data);

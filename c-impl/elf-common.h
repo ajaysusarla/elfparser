@@ -17,6 +17,8 @@
 #ifndef _ELF_COMMON_H_
 #define _ELF_COMMON_H_
 
+#include <stdint.h>
+
 /* ELF identification */
 #define EI_MAG0    0
 #define EI_MAG1    1
@@ -57,7 +59,7 @@ enum ELFObjectType {
 };
 
 /* ELF Machine type */
-enum ELFMachineType {
+typedef enum {
         EM_NONE = 0,
         EM_M32 = 1,
         EM_SPARC = 2,
@@ -136,87 +138,8 @@ enum ELFMachineType {
         EM_TILEPRO = 188,
         EM_MICROBLAZE = 189,
         EM_TILEGX = 191,
-};
+} ELFMachineType;
 
-#if 0
-char *machine_type[] = {
-        "None",
-        "AT&T WE 32100",
-        "SPARC",
-        "Intel 80386",
-        "Motorola 68000",
-        "Motorola 88000",
-        "Intel 80860",
-        "MIPS RS3000 Big-Endian",
-        "IBM Sys/370",
-        "MIPS RS3000 Little-Endian",
-        "HPPA",
-        "Fujitsu VPP500",
-        "Sun v8plus",
-        "Intel 80960",
-        "PowerPC",
-        "IBM S390",
-        "NEC V800",
-        "Fujitsu FR20",
-        "TRW RH-32",
-        "Motorola RCE",
-        "ARM",
-        "Digital Alpha",
-        "Hitachi SH",
-        "SPARC V9 64",
-        "Siemens Tricore",
-        "Argonaut RISC Core",
-        "Hitachi H8/300",
-        "Hitachi H8/300H",
-        "Hitachi H8S",
-        "Hitachi H8/500",
-        "Intel Merced",
-        "Stanford MIPS-X",
-        "Motorola Coldfire",
-        "Motorola M68HC12",
-        "Fujitsu MMA",
-        "Siemens PCP",
-        "Sony nCPU embeeded RISC",
-        "Denso NDR1 microprocessor",
-        "Motorola Start",
-        "Toyota ME16 processor",
-        "STMicroelectronic ST100",
-        "Advanced Logic Corp. Tinyj",
-        "AMD x86-64",
-        "Sony DSP"
-        "Siemens FX66 microcontroller",
-        "STMicroelectronics ST9+",
-        "STmicroelectronics ST7",
-        "Motorola MC68HC16",
-        "Motorola MC68HC11",
-        "Motorola MC68HC08",
-        "Motorola MC68HC05",
-        "Silicon Graphics",
-        "STMicroelectronics ST19",
-        "Digital VAX",
-        "Axis Communications 32-bit",
-        "Infineon Technologies 32-bit",
-        "Element14 64-bit",
-        "LSI Logic 16-bit",
-        "Donald Knuth's educational 64-bit processor",
-        "Harvard University machine-independent object files",
-        "SiTera Prism",
-        "Atmel AVR 8-bit",
-        "Fujitsu FR30",
-        "Mitsubishi D10V",
-        "Mitsubishi D30V",
-        "NEC v850",
-        "Mitsubishi M32R",
-        "Matsushita MN10300",
-        "Matsushita MN10200",
-        "picoJava",
-        "OpenRISC 32-bit",
-        "ARC Cores Tangent-A5",
-        "Tensilica Xtensa Architecture",
-        "ARM AARCH64",
-        "Tilera TILEPro",
-        "Xilinx MicroBlaze",
-        "Tilera TILE-Gx"
-};
-#endif
+const char *elf_common_get_architecture(uint16_t type);
+
 #endif  /* _ELF_COMMON_H_ */

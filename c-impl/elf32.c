@@ -41,7 +41,7 @@ static char *class_arr[] = {
         "64 bit"
 };
 
-char *get_elf32_class(void *data)
+const char *get_elf32_class(void *data)
 {
         Elf32_Eheader *file = (Elf32_Eheader *)data;
 
@@ -55,7 +55,7 @@ static char *data_enc_arr[] = {
         "MSB - big endian"
 };
 
-char *get_elf32_data_encoding(void *data)
+const char *get_elf32_data_encoding(void *data)
 {
         Elf32_Eheader *file = (Elf32_Eheader *)data;
 
@@ -81,7 +81,7 @@ static char *obj_type_arr[] = {
         "Processor-specific"
 };
 
-char *get_elf32_object_type(void *data)
+const char *get_elf32_object_type(void *data)
 {
         Elf32_Eheader *file = (Elf32_Eheader *)data;
 
@@ -102,42 +102,11 @@ char *get_elf32_object_type(void *data)
 }
 
 /* ELF Architecture */
-static char *machine_arr[] = {
-        "None",
-        "AT&T WE 32100",
-        "SPARC",
-        "Intel 80386",
-        "Motorola 68000",
-        "Motorola 88000",
-        "Intel 80860",
-        "MIPS RS3000",
-};
-
-char *get_elf32_architecture(void *data)
+const char *get_elf32_architecture(void *data)
 {
         Elf32_Eheader *file = (Elf32_Eheader *)data;
 
-        switch(file->e_machine) {
-        case EM_NONE:
-        case EM_M32:
-        case EM_SPARC:
-        case EM_386:
-        case EM_68K:
-        case EM_88K:
-        case EM_860:
-        case EM_MIPS:
-                return machine_arr[file->e_machine];
-        case EM_SPARC32PLUS:
-                return "Sun SPARC 32+";
-        case EM_SPARCV9:
-                return "SPARC V9";
-        case EM_AMD64:
-                return "AMD 64";
-        case EM_ARM:
-                return "ARM";
-        default:
-                return "Unknown";
-        }
+        return elf_common_get_architecture(file->e_machine);
 }
 
 /* ELF version */

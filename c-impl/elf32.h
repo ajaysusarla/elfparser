@@ -38,11 +38,11 @@ typedef struct {
 } Elf32_Eheader;
 
 int validate_elf32_ident(void *data);
-char *get_elf32_class(void *data);
-char *get_elf32_data_encoding(void *data);
+const char *get_elf32_class(void *data);
+const char *get_elf32_data_encoding(void *data);
 uint32_t get_elf32_version_from_ident(void *data);
-char *get_elf32_object_type(void *data);
-char *get_elf32_architecture(void *data);
+const char *get_elf32_object_type(void *data);
+const char *get_elf32_architecture(void *data);
 uint32_t get_elf32_version(void *data);
 uint32_t get_elf32_entry_addr(void *data);
 uint32_t get_elf32_prog_hdr_off(void *data);

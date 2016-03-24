@@ -29,20 +29,21 @@
 #define IS_ELF32(elf) (((Elf32_Eheader*)elf)->e_ident[EI_CLASS] == ELFCLASS32)
 #define IS_ELF64(elf) (((Elf64_Eheader*)elf)->e_ident[EI_CLASS] == ELFCLASS64)
 
+
 struct _elfObject {
         unsigned char *data;
         size_t len;
 
-        int      (*validate_elf_ident)(void *data);
-        char    *(*get_elf_class)(void *data);
-        char    *(*get_elf_data_encoding)(void *data);
-        uint32_t (*get_elf_version_from_ident)(void *data);
-        char    *(*get_elf_object_type)(void *data);
-        char    *(*get_elf_architecture)(void *data);
-        uint32_t (*get_elf_version)(void *data);
-        uint32_t (*get_elf_entry_addr)(void *data);
-        uint32_t (*get_elf_prog_hdr_off)(void *data);
-        uint32_t (*get_elf_sect_hdr_off)(void *data);
+        int        (*validate_elf_ident)(void *data);
+        const char *(*get_elf_class)(void *data);
+        const char *(*get_elf_data_encoding)(void *data);
+        uint32_t   (*get_elf_version_from_ident)(void *data);
+        const char *(*get_elf_object_type)(void *data);
+        const char *(*get_elf_architecture)(void *data);
+        uint32_t   (*get_elf_version)(void *data);
+        uint32_t   (*get_elf_entry_addr)(void *data);
+        uint32_t   (*get_elf_prog_hdr_off)(void *data);
+        uint32_t   (*get_elf_sect_hdr_off)(void *data);
 };
 
 
@@ -147,7 +148,7 @@ void elf_object_free(ElfObject **obj)
 }
 
 
-char *elf_get_class(ElfObject *obj)
+const char *elf_get_class(ElfObject *obj)
 {
         if (obj == NULL || obj->data == NULL)
                 return NULL;
@@ -155,7 +156,7 @@ char *elf_get_class(ElfObject *obj)
         return obj->get_elf_class(obj->data);
 }
 
-char *elf_get_data_encoding(ElfObject *obj)
+const char *elf_get_data_encoding(ElfObject *obj)
 {
         if (obj == NULL || obj->data == NULL)
                 return NULL;
@@ -171,7 +172,7 @@ uint32_t elf_get_version_from_ident(ElfObject *obj)
         return obj->get_elf_version_from_ident(obj->data);
 }
 
-char *elf_get_object_type(ElfObject *obj)
+const char *elf_get_object_type(ElfObject *obj)
 {
         if (obj == NULL || obj->data == NULL)
                 return NULL;
@@ -179,7 +180,7 @@ char *elf_get_object_type(ElfObject *obj)
         return obj->get_elf_object_type(obj->data);
 }
 
-char *elf_get_architecture(ElfObject *obj)
+const char *elf_get_architecture(ElfObject *obj)
 {
         if (obj == NULL || obj->data == NULL)
                 return NULL;

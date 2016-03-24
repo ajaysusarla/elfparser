@@ -23,6 +23,7 @@ TEST_CFLAGS := $(CFLAGS) -I$(CWD)
 all: elf elf32 elf64 main
 	$(CC) $(CFLAGS) $(LIBS) \
 		elf.o \
+		elf-common.o \
 		elf32.o \
 		elf64.o \
 		main.o \
@@ -31,8 +32,11 @@ all: elf elf32 elf64 main
 main: main.c
 	$(CC) $(CFLAGS) -c main.c
 
-elf: elf.c elf.h elf-common.h
+elf: elf.c elf.h elf-common
 	$(CC) $(CFLAGS) -c elf.c
+
+elf-common: elf-common.h elf-common.c
+	$(CC) $(CFLAGS) -c elf-common.c
 
 elf32: elf32.h elf32.c
 	$(CC) $(CFLAGS) -c elf32.c
