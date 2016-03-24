@@ -20,16 +20,29 @@
 #include "elf-common.h"
 
 #include <stdint.h>
+#include <stdio.h>
 
-int validate_elf_ident(void *data);
-char *get_elf_class(void *data);
-char *get_elf_data_encoding(void *data);
-uint32_t get_elf_version_from_ident(void *data);
-char *get_elf_object_type(void *data);
-char *get_elf_architecture(void *data);
-uint32_t get_elf_version(void *data);
-uint32_t get_elf_entry_addr(void *data);
-uint32_t get_elf_prog_hdr_off(void *data);
-uint32_t get_elf_sect_hdr_off(void *data);
+#ifdef DEBUG
+#define d(x) x
+#else
+#define d(x)
+#endif
+
+
+typedef struct _elfObject ElfObject;
+
+
+ElfObject *elf_object_init(const char *path);
+void elf_object_free(ElfObject **obj);
+
+char *elf_get_class(ElfObject *obj);
+char *elf_get_data_encoding(ElfObject *obj);
+uint32_t elf_get_version_from_ident(ElfObject *obj);
+char *elf_get_object_type(ElfObject *obj);
+char *elf_get_architecture(ElfObject *obj);
+uint32_t elf_get_version(ElfObject *obj);
+uint32_t elf_get_entry_addr(ElfObject *obj);
+uint32_t elf_get_prog_hdr_off(ElfObject *obj);
+uint32_t elf_get_sect_hdr_off(ElfObject *obj);
 
 #endif  /* _ELF_H_ */

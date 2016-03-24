@@ -138,6 +138,7 @@ enum ELFMachineType {
         EM_TILEGX = 191,
 };
 
+#if 0
 char *machine_type[] = {
         "None",
         "AT&T WE 32100",
@@ -154,7 +155,7 @@ char *machine_type[] = {
         "Sun v8plus",
         "Intel 80960",
         "PowerPC",
-        "IBM S390",,
+        "IBM S390",
         "NEC V800",
         "Fujitsu FR20",
         "TRW RH-32",
@@ -217,5 +218,5 @@ char *machine_type[] = {
         "Xilinx MicroBlaze",
         "Tilera TILE-Gx"
 };
-
+#endif
 #endif  /* _ELF_COMMON_H_ */

@@ -18,76 +18,38 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
 
 #include <errno.h>
 
-#ifdef DEBUG
-#define d(x) x
-#else
-#define d(x)
-#endif
-
 int main(int argc, char **argv)
 {
-        void *data;
-        size_t siz;
-        FILE *fp;
-        struct stat sb;
+        ElfObject *elf = NULL;
 
         if (argc != 2) {
                 fprintf(stderr, "USAGE: %s <path-to-file>\n", argv[0]);
                 exit(EXIT_FAILURE);
         }
 
-        /* Get file size */
-        if (stat(argv[1], &sb) == -1) {
-                perror("stat");
-                exit(EXIT_FAILURE);
-        }
-
-        data = malloc(sizeof(unsigned char) * sb.st_size);
-        if (data == NULL) {
-                perror("malloc");
-                exit(EXIT_FAILURE);
-        }
-
-        fp = fopen(argv[1], "r");
-        if (fp == NULL) {
-                perror("fopen");
-                exit(EXIT_FAILURE);
-        }
-
-        siz = fread(data, sizeof(unsigned char), sb.st_size, fp);
-        d(printf(">> Read %zu bytes from %s.\n", siz, argv[1]));
-        fclose(fp);
-
-        if (siz < EI_NIDENT) {
-                fprintf(stderr, "fread: Couldn't read elf header.\n");
-                exit(EXIT_FAILURE);
-        }
-
-        if (validate_elf_ident(data) != 0) {
-                fprintf(stderr, "Not a valid ELF file!\n");
+        elf = elf_object_init(argv[1]);
+        if (elf == NULL) {
                 exit(EXIT_FAILURE);
         }
 
         printf("=== ELF info for `%s` ===\n", argv[1]);
-        printf("Class          : %s\n", get_elf_class(data));
-        printf("Data           : %s\n", get_elf_data_encoding(data));
-        printf("Version        : %d\n", get_elf_version_from_ident(data));
-        printf("Object Type    : %s\n", get_elf_object_type(data));
-        printf("Architecture   : %s\n", get_elf_architecture(data));
-        printf("Version        : %d\n", get_elf_version(data));
-        printf("Entry Address  : 0x%x\n", get_elf_entry_addr(data));
+        printf("Class          : %s\n", elf_get_class(elf));
+        printf("Data           : %s\n", elf_get_data_encoding(elf));
+        printf("Version        : %d\n", elf_get_version_from_ident(elf));
+        printf("Object Type    : %s\n", elf_get_object_type(elf));
+        printf("Architecture   : %s\n", elf_get_architecture(elf));
+        printf("Version        : %d\n", elf_get_version(elf));
+        printf("Entry Address  : 0x%x\n", elf_get_entry_addr(elf));
         printf("\n");
-        printf("Program Header offset  : %d\n", get_elf_prog_hdr_off(data));
-        printf("Section Header offset  : %d\n", get_elf_sect_hdr_off(data));
+        printf("Program Header offset  : %d\n", elf_get_prog_hdr_off(elf));
+        printf("Section Header offset  : %d\n", elf_get_sect_hdr_off(elf));
 
         printf("\n");
+
+        elf_object_free(&elf);
 
         exit(EXIT_SUCCESS);
 }

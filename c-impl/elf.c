@@ -19,12 +19,20 @@
 #include "elf32.h"
 #include "elf64.h"
 
-#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+#include <errno.h>
 
 #define IS_ELF32(elf) (((Elf32_Eheader*)elf)->e_ident[EI_CLASS] == ELFCLASS32)
 #define IS_ELF64(elf) (((Elf64_Eheader*)elf)->e_ident[EI_CLASS] == ELFCLASS64)
 
-struct Elf {
+struct _elfObject {
+        unsigned char *data;
+        size_t len;
+
         int      (*validate_elf_ident)(void *data);
         char    *(*get_elf_class)(void *data);
         char    *(*get_elf_data_encoding)(void *data);
@@ -37,7 +45,10 @@ struct Elf {
         uint32_t (*get_elf_sect_hdr_off)(void *data);
 };
 
-static struct Elf elf32ops = {
+
+static ElfObject elf32ops = {
+        NULL,
+        0,
         validate_elf32_ident,
         get_elf32_class,
         get_elf32_data_encoding,
@@ -50,7 +61,9 @@ static struct Elf elf32ops = {
         get_elf32_sect_hdr_off
 };
 
-static struct Elf elf64ops = {
+static ElfObject elf64ops = {
+        NULL,
+        0,
         validate_elf64_ident,
         get_elf64_class,
         get_elf64_data_encoding,
@@ -63,61 +76,145 @@ static struct Elf elf64ops = {
         get_elf64_sect_hdr_off
 };
 
-static struct Elf *elfops = NULL;
-
-int validate_elf_ident(void *data)
+ElfObject *elf_object_init(const char *path)
 {
-        if (IS_ELF32(data)) {
-                elfops = &elf32ops;
-        } else if (IS_ELF64(data)) {
-                elfops = &elf64ops;
+        ElfObject *o = NULL;
+        unsigned char *data;
+        size_t siz;
+        FILE *fp;
+        struct stat sb;
+
+        if (path == NULL || path[0] == '\0') {
+                return NULL;
         }
 
-        return elfops->validate_elf_ident(data);
+        /* Get file size */
+        if (stat(path, &sb) == -1) {
+                perror("stat");
+                return o;
+        }
+
+        data = malloc(sizeof(unsigned char) * sb.st_size);
+        if (data == NULL) {
+                perror("malloc");
+                return NULL;
+        }
+
+        fp = fopen(path, "r");
+        if (fp == NULL) {
+                perror("fopen");
+                free(data);
+                return o;
+        }
+
+        siz = fread(data, sizeof(unsigned char), sb.st_size, fp);
+        fclose(fp);
+
+        if (siz < EI_NIDENT) {
+                fprintf(stderr, "fread: Couldn't read elf header.\n");
+                free(data);
+                return o;
+        }
+
+        /* Validate as a 32bit ELF. */
+        if (validate_elf32_ident(data) != 0) {
+                fprintf(stderr, "Not a valid ELF file!\n");
+                free(data);
+                return NULL;
+        }
+
+        if (IS_ELF32(data)) {
+                o = &elf32ops;
+        } else if (IS_ELF64(data)) {
+                o = &elf64ops;
+        }
+
+        o->data = data;
+        o->len = siz;
+
+        return o;
 }
 
-char *get_elf_class(void *data)
+void elf_object_free(ElfObject **obj)
 {
-        return elfops->get_elf_class(data);
+        if (*obj) {
+                if ((*obj)->data) {
+                        free((*obj)->data);
+                }
+
+                *obj = NULL;
+        }
 }
 
-char *get_elf_data_encoding(void *data)
+
+char *elf_get_class(ElfObject *obj)
 {
-        return elfops->get_elf_data_encoding(data);
+        if (obj == NULL || obj->data == NULL)
+                return NULL;
+
+        return obj->get_elf_class(obj->data);
 }
 
-uint32_t get_elf_version_from_ident(void *data)
+char *elf_get_data_encoding(ElfObject *obj)
 {
-        return elfops->get_elf_version_from_ident(data);
+        if (obj == NULL || obj->data == NULL)
+                return NULL;
+
+        return obj->get_elf_data_encoding(obj->data);
 }
 
-char *get_elf_object_type(void *data)
+uint32_t elf_get_version_from_ident(ElfObject *obj)
 {
-        return elfops->get_elf_object_type(data);
+        if (obj == NULL || obj->data == NULL)
+                return -1;
+
+        return obj->get_elf_version_from_ident(obj->data);
 }
 
-char *get_elf_architecture(void *data)
+char *elf_get_object_type(ElfObject *obj)
 {
-        return elfops->get_elf_architecture(data);
+        if (obj == NULL || obj->data == NULL)
+                return NULL;
+
+        return obj->get_elf_object_type(obj->data);
 }
 
-uint32_t get_elf_version(void *data)
+char *elf_get_architecture(ElfObject *obj)
 {
-        return elfops->get_elf_version(data);
+        if (obj == NULL || obj->data == NULL)
+                return NULL;
+
+        return obj->get_elf_architecture(obj->data);
 }
 
-uint32_t get_elf_entry_addr(void *data)
+uint32_t elf_get_version(ElfObject *obj)
 {
-        return elfops->get_elf_entry_addr(data);
+        if (obj == NULL || obj->data == NULL)
+                return -1;
+
+        return obj->get_elf_version(obj->data);
 }
 
-uint32_t get_elf_prog_hdr_off(void *data)
+uint32_t elf_get_entry_addr(ElfObject *obj)
 {
-        return elfops->get_elf_prog_hdr_off(data);
+        if (obj == NULL || obj->data == NULL)
+                return -1;
+
+        return obj->get_elf_entry_addr(obj->data);
 }
 
-uint32_t get_elf_sect_hdr_off(void *data)
+uint32_t elf_get_prog_hdr_off(ElfObject *obj)
 {
-        return elfops->get_elf_sect_hdr_off(data);
+        if (obj == NULL || obj->data == NULL)
+                return -1;
+
+        return obj->get_elf_prog_hdr_off(obj->data);
 }
 
+uint32_t elf_get_sect_hdr_off(ElfObject *obj)
+{
+        if (obj == NULL || obj->data == NULL)
+                return -1;
+
+        return obj->get_elf_sect_hdr_off(obj->data);
+}
