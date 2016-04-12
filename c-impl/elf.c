@@ -19,7 +19,10 @@
 #include "elf32.h"
 #include "elf64.h"
 
+#include "ar.h"
+
 #include <stdlib.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -113,6 +116,16 @@ ElfObject *elf_object_init(const char *path)
 
         if (siz < EI_NIDENT) {
                 fprintf(stderr, "fread: Couldn't read elf header.\n");
+                free(data);
+                return o;
+        }
+
+        if (memcmp(data, AR_MAG, AR_MAG_LEN) == 0) {
+                fprintf(stdout, "File is an archive!\n");
+                free(data);
+                return o;
+        } else if (memcmp(data, AR_MAG_THIN, AR_MAG_LEN) == 0) {
+                fprintf(stdout, "File is a thin archive!\n");
                 free(data);
                 return o;
         }
