@@ -14,7 +14,11 @@
 mod elf;
 extern crate getopts;
 use getopts::Options;
-use std::env;
+
+use std::{env, fs, process};
+use std::io::{self, Write};
+use std::fmt::Display;
+use std::os::unix::fs::MetadataExt;
 
 fn print_usage(program: &str, opts: Options) {
     let brief = format!("USAGE: {} <FILE> [OPTIONS]", program);
@@ -22,7 +26,17 @@ fn print_usage(program: &str, opts: Options) {
     print!("{}", opts.usage(&brief));
 }
 
-fn parse_elf(input: &str) {
+#[inline]
+fn exit_err<T: Display>(msg: T, code: i32) -> ! {
+    writeln!(&mut io::stderr(), "Error: {}", msg).expect("Could not write to stdout");
+    process::exit(code)
+}
+
+fn parse_file(input: &str) {
+    let metadata = fs::metadata(input).unwrap_or_else(|e| exit_err(e, 2));
+
+    println!("`size of {} is {}.", input, metadata.size());
+
     println!("=== ELF info for `{}` ===\n", input);
     elf::elf_init();
 }
@@ -50,6 +64,6 @@ fn main() {
         return;
     };
 
-    parse_elf(&input);
+    parse_file(&input);
 
 }
